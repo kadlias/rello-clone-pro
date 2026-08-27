@@ -12,13 +12,18 @@ app.get("/tasks", (req, res) => {
 });
 
 app.post("/tasks", (req, res) => {
-  const task = req.body;
+  const { id, content, column } = req.body;
+  if (!id || !content || !["todo", "doing", "done"].includes(column)) {
+    return res.status(422).json({ error: "Invalid task payload" });
+  }
+  const task = { id, content: content.trim(), column };
   tasks.push(task);
   res.json(task);
 });
 
 app.put("/tasks/:id", (req, res) => {
   const { id } = req.params;
+  if (!tasks.some(t => t.id === id)) return res.status(404).json({ error: "Task not found" });
   tasks = tasks.map(t =>
     t.id === id ? { ...t, ...req.body } : t
   );

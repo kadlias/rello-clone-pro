@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Task {
   id: string;
@@ -7,26 +7,25 @@ interface Task {
 }
 
 const columns = ["todo", "doing", "done"];
+const API_URL = "http://localhost:3000";
 
 export default function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => { fetch(`${API_URL}/tasks`).then(r => r.json()).then(setTasks).catch(() => undefined); }, []);
 
   const addTask = (column: string) => {
     const content = prompt("Task:");
     if (!content) return;
 
-    setTasks(prev => [
-      ...prev,
-      { id: crypto.randomUUID(), content, column }
-    ]);
+    const task = { id: crypto.randomUUID(), content, column };
+    fetch(`${API_URL}/tasks`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(task) })
+      .then(() => setTasks(prev => [...prev, task]));
   };
 
   const moveTask = (id: string, newColumn: string) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === id ? { ...task, column: newColumn } : task
-      )
-    );
+    fetch(`${API_URL}/tasks/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ column: newColumn }) })
+      .then(() => setTasks(prev => prev.map(task => task.id === id ? { ...task, column: newColumn } : task)));
   };
 
   return (
