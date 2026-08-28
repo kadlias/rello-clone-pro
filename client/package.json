@@ -1,6 +1,7 @@
 {
   "name": "rello-clone-client",
   "private": true,
+  "type": "module",
   "version": "1.0.0",
   "scripts": { "dev": "vite", "build": "tsc -b && vite build" },
   "dependencies": { "react": "latest", "react-dom": "latest" },

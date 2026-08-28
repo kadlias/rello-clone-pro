@@ -7,7 +7,7 @@ interface Task {
 }
 
 const columns = ["todo", "doing", "done"];
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -20,11 +20,13 @@ export default function App() {
 
     const task = { id: crypto.randomUUID(), content, column };
     fetch(`${API_URL}/tasks`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(task) })
-      .then(() => setTasks(prev => [...prev, task]));
+      .then(response => { if (!response.ok) throw new Error("Could not create task"); return response.json(); })
+      .then(saved => setTasks(prev => [...prev, saved]));
   };
 
   const moveTask = (id: string, newColumn: string) => {
     fetch(`${API_URL}/tasks/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ column: newColumn }) })
+      .then(response => { if (!response.ok) throw new Error("Could not move task"); })
       .then(() => setTasks(prev => prev.map(task => task.id === id ? { ...task, column: newColumn } : task)));
   };
 

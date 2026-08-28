@@ -53,6 +53,12 @@ npm run dev
 - POST /tasks → Create a new task  
 - PUT /tasks/:id → Update a task  
 
+## Verification
+
+- Backend: `cd server && npm test`
+- Frontend production build: `cd client && npm run build`
+- Set `VITE_API_URL` when the API is not running at `http://localhost:3000`.
+
 ## Design Decisions
 
 - The backend uses in-memory storage to keep the project simple and focused on architecture.

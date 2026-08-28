@@ -18,16 +18,21 @@ app.post("/tasks", (req, res) => {
   }
   const task = { id, content: content.trim(), column };
   tasks.push(task);
-  res.json(task);
+  res.status(201).json(task);
 });
 
 app.put("/tasks/:id", (req, res) => {
   const { id } = req.params;
   if (!tasks.some(t => t.id === id)) return res.status(404).json({ error: "Task not found" });
+  if (req.body.column && !["todo", "doing", "done"].includes(req.body.column)) {
+    return res.status(422).json({ error: "Invalid column" });
+  }
   tasks = tasks.map(t =>
     t.id === id ? { ...t, ...req.body } : t
   );
   res.json({ success: true });
 });
 
-app.listen(3000, () => console.log("Server running on 3000"));
+if (require.main === module) app.listen(process.env.PORT || 3000, () => console.log("Server running"));
+
+module.exports = { app, resetTasks: () => { tasks = []; } };

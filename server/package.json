@@ -2,6 +2,6 @@
   "name": "rello-clone-api",
   "private": true,
   "version": "1.0.0",
-  "scripts": { "start": "node index.js" },
+  "scripts": { "start": "node index.js", "test": "node --test" },
   "dependencies": { "cors": "latest", "express": "latest" }
 }
